@@ -1,42 +1,27 @@
 package week3.jsonHW
 
+import java.util.Date
 import JsUtil._
+
+import scala.annotation.implicitNotFound
 
 /**
   * Created by brett on 4/25/2017.
   */
+@implicitNotFound(s"Could not find {T}")
 trait JsWriter[T] {
   def write(value: T): JsValue
 }
 object JsWriter {
-
   def apply[T: JsWriter]: JsWriter[T] = implicitly[JsWriter[T]]
 
-  implicit object AnonWitness extends JsWriter[Anonymous] {
-    def write(value: Anonymous): JsValue = JsObject(visitorWrite(value))
+  implicit object DateWitness extends JsWriter[Date] {
+    def write(value: Date): JsValue = JsString(value.toString)
   }
-  implicit object UserWitness extends JsWriter[User] {
-    def write(value: User): JsValue = JsObject(visitorWrite(value) +
-      ("email" -> JsString(value.email))
-    )
-  }
-  implicit object VisitorWitness extends JsWriter[Visitor] {
-    def write(value: Visitor): JsValue = value match {
-      case a: Anonymous => a.toJson
-      case u: User => u.toJson
-    }
+  implicit object StringWitness extends JsWriter[String] {
+    def write(value: String): JsValue = JsString(value)
   }
 
-//  implicit def genericVisitorWitness[V <: Visitor](value: V): JsWriter[V] = value match {
-//    case a: Anonymous => new JsWriter[Anonymous] {
-//      override def write(value: Anonymous): JsValue = JsObject(visitorWrite(value))
-//    }
-//    case u: Visitor => new JsWriter[User] {
-//      override def write(value: User): JsValue = JsObject(visitorWrite(value) +
-//        ("email" -> JsString(value.email))
-//      )
-//    }
-//  }
 }
 
 
