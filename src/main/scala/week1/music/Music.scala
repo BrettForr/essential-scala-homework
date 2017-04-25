@@ -5,3 +5,5 @@ package week1.music
   */
 sealed trait Music
 
+final case class Song(parts: Seq[Music]) extends Music
+
